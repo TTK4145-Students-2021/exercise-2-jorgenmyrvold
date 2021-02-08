@@ -13,9 +13,10 @@ func numberServer(add <-chan int, sub <-chan int, read chan<- int) {
 		select {
 		case x := <-add:
 			number += x
-		case y := <-sub:
-			number -= y
+		case x := <-sub:
+			number -= x
 		}
+		// read <- number
 	}
 }
 
@@ -50,9 +51,12 @@ func main() {
 	go decrementer(sub, subFinished)
 	go numberServer(add, sub, read)
 
-	// TODO: block on finished from both "worker" goroutines
-	<-addFinished
-	<-subFinished
-
+	// time.Sleep(time.Millisecond * 1000)
 	fmt.Println("The magic number is:", <-read)
+
+	// TODO: block on finished from both "worker" goroutines
+	dummy1 := <-addFinished // Not possible to write _ := <-addFinished
+	dummy2 := <-subFinished
+	fmt.Println(dummy1, dummy2) // Must use variables because not possible to write as comment on line 54
+
 }
