@@ -15,6 +15,8 @@ func numberServer(add <-chan int, sub <-chan int, read chan<- int) {
 			number += x
 		case y := <-sub:
 			number -= y
+		case read <- number:
+			// Do nothing
 		}
 	}
 }
@@ -39,9 +41,9 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// TODO: Construct the remaining channels
-	read := make(chan int, 1024) // Buffered channel with 1024 bytes
-	add := make(chan int, 1024)
-	sub := make(chan int, 1024)
+	read := make(chan int) // Buffered channel with 1024 bytes
+	add := make(chan int)
+	sub := make(chan int)
 	addFinished := make(chan struct{})
 	subFinished := make(chan struct{})
 
